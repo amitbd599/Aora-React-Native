@@ -1,12 +1,91 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-
+import { View, Text, ScrollView, Image } from "react-native";
+import React, { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { images } from "../../assets/constants";
+import FormField from "../../components/FormField";
+import CustomButton from "../../components/CustomButton";
+import { Link } from "expo-router";
+import { createUser } from "../../lib/appwrite";
 const SignUp = () => {
-    return (
-        <View>
-            <Text>SignUp</Text>
-        </View>
-    )
-}
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
 
-export default SignUp
+  const submit = async () => {
+    await createUser();
+  };
+  return (
+    <SafeAreaView className="bg-primary h-full">
+      <ScrollView contentContainerStyle={{ height: "100%" }}>
+        <View className="w-full justify-center  h-full px-4">
+          <Image
+            source={images.logo}
+            resizeMode="contain"
+            className="w-[115px] h-[35px]"
+          />
+          <Text className="text-[22px] font-semibold text-white mt-[32px]">
+            Sign up
+          </Text>
+
+          <FormField
+            title="User Name"
+            placeholder="Enter user name"
+            value={form.username}
+            handelChangeText={(e) => {
+              setForm({
+                username: e,
+              });
+            }}
+            otherStyle="mt-7"
+            keyboardType="email-address"
+          />
+          <FormField
+            title="Email"
+            placeholder="Enter email"
+            value={form.email}
+            handelChangeText={(e) => {
+              setForm({
+                email: e,
+              });
+            }}
+            otherStyle="mt-7"
+            keyboardType="email-address"
+          />
+          <FormField
+            title="Password"
+            placeholder="Enter password"
+            value={form.password}
+            handelChangeText={(e) => {
+              setForm({
+                password: e,
+              });
+            }}
+            otherStyle="mt-7"
+          />
+
+          <CustomButton
+            title={"Sign Up"}
+            handlePress={() => {
+              submit();
+            }}
+            containerStyle={"w-full mt-7"}
+            testStyle={""}
+            isLoading={false}
+          />
+          <View className="justify-center pt-5 flex-row">
+            <Text className="text-lg text-gray-100 font-semibold">
+              Already have an account?{" "}
+              <Link href="/sign-in" className="text-secondary">
+                Login
+              </Link>
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+export default SignUp;
