@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Image } from "react-native";
+import { View, Text, ScrollView, Image, Alert } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../assets/constants";
@@ -14,7 +14,12 @@ const SignUp = () => {
   });
 
   const submit = async () => {
-    await createUser();
+    if (!form.username || !form.password || !form.email) {
+      Alert.alert("Please fill all the fields");
+      return;
+    } else {
+      await createUser();
+    }
   };
   return (
     <SafeAreaView className="bg-primary h-full">
