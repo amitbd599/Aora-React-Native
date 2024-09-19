@@ -4,9 +4,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../assets/constants";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { createUser } from "../../lib/appwrite";
 const SignUp = () => {
+  const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -14,11 +15,23 @@ const SignUp = () => {
   });
 
   const submit = async () => {
-    if (!form.username || !form.password || !form.email) {
-      Alert.alert("Please fill all the fields");
-      return;
-    } else {
-      await createUser();
+    if (form.username === "" || form.email === "" || form.password === "") {
+      Alert.alert("Error", "Please fill in all fields");
+    }
+
+    console.log(form);
+
+    setSubmitting(true);
+    try {
+      const result = await createUser(form.email, form.password, form.username);
+      // setUser(result);
+      // setIsLogged(true);
+
+      router.replace("/home");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setSubmitting(false);
     }
   };
   return (
@@ -40,6 +53,7 @@ const SignUp = () => {
             value={form.username}
             handelChangeText={(e) => {
               setForm({
+                ...form,
                 username: e,
               });
             }}
@@ -52,6 +66,7 @@ const SignUp = () => {
             value={form.email}
             handelChangeText={(e) => {
               setForm({
+                ...form,
                 email: e,
               });
             }}
@@ -64,6 +79,7 @@ const SignUp = () => {
             value={form.password}
             handelChangeText={(e) => {
               setForm({
+                ...form,
                 password: e,
               });
             }}

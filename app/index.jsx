@@ -45,15 +45,6 @@ const App = () => {
               testStyle={""}
               isLoading={false}
             />
-            <CustomButton
-              title={"Continue with Email"}
-              handlePress={() => {
-                router.push("/sign-in");
-              }}
-              containerStyle={"w-full mt-7"}
-              testStyle={""}
-              isLoading={false}
-            />
           </View>
         </ScrollView>
         <StatusBar backgroundColor="#161622" style="light" />
