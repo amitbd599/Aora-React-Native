@@ -1,20 +1,36 @@
-import { View, Text, SafeAreaView, FlatList, Image } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  FlatList,
+  Image,
+  RefreshControl,
+  Alert,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { images } from "../../assets/constants";
 import SearchInput from "../../components/SearchInput";
 import Trading from "../../components/Trading";
 import EmptyState from "../../components/EmptyState";
+import { getAllPost, getLatestPosts } from "../../lib/appwrite";
+import useAppWrite from "../../lib/useAppWrite";
+import VideoCard from "../../components/VideoCard";
 const Home = () => {
+  const { data: posts, refetch } = useAppWrite(getAllPost);
+  const { data: latestPosts } = useAppWrite(getLatestPosts);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[]}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View>
-            <Text className="text-[20px] text-white mb-2">Item {item.id}</Text>
-          </View>
-        )}
+        data={posts}
+        keyExtractor={(item) => item.$id}
+        renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
           <View className="pt-[40px] my-6 px-4 space-y-6">
             <View className="justify-between items-start flex-row mb-6">
@@ -40,7 +56,7 @@ const Home = () => {
                 Latest Videos
               </Text>
             </View>
-            <Trading post={[] ?? []} />
+            <Trading post={latestPosts} />
           </View>
         )}
         ListEmptyComponent={() => (
@@ -49,6 +65,9 @@ const Home = () => {
             subTitle="No video create yet."
           />
         )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );
